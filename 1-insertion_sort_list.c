@@ -5,49 +5,51 @@
  * insertion_sort_list - Sorts a doubly linked list of integers in
  * ascending order using the insertion sort algorithm.
  *
- * @list: Pointer to a pointer to the head of the doubly linked list.
- * Return: Nothing
+ * @head: Pointer to a pointer to the head of the doubly linked list.
+ * Return: void
  */
-void insertion_sort_list(listint_t **list)
+void insertion_sort_list(listint_t **head)
 {
-	listint_t *current; /* Pointer to the current node in the list */
-	listint_t *temp; /* Temporary pointer for swapping */
+	listint_t *current_node; /* Pointer to the current node being checked */
+	listint_t *next_node; /* Temporary pointer for the node to be swapped */
 
-	if (!list || !*list)
+	if (!head || !*head)
 	{
-		/* If the list is null or empty, return without sorting */
 		return;
 	}
-	/* Start at the second node and loop through the list */
-	for (current = (*list)->next; current; current = current->next)
+	current_node = *head;
+	while (current_node)
 	{
-		/* While the current node is smaller than the previous one, swap them */
-		for (; current->prev && (current->prev->n > current->n);)
+		while (current_node->next && (current_node->n > current_node->next->n))
 		{
-			temp = current->prev;
-			/* Adjust the links for the swap */
-			if (temp->prev)
+			next_node = current_node->next; /* Set the node to swap with current */
+			current_node->next = next_node->next; /* Connect to the following node */
+			next_node->prev = current_node->prev; /* Connect to the previous node */
+			if (current_node->prev)
 			{
-				temp->prev->next = current;
+				current_node->prev->next = next_node;
 			}
 			else
 			{
-				/* Current becomes the new head if temp has no previous node */
-				*list = current;
+				*head = next_node;
 			}
-			if (current->next)
+			if (next_node->next)
 			{
-				current->next->prev = temp;
+				next_node->next->prev = current_node;
 			}
-			/* Perform the swap */
-			current->prev = temp->prev;
-			temp->prev = current;
-			temp->next = current->next;
-			current->next = temp;
-			/* Move `current` back to check if further swapping is needed */
-			current = temp;
-			print_list(*list); /* Optional: print the list after each swap */
+			current_node->prev = next_node;
+			next_node->next = current_node;
+			if (next_node->prev)
+			{
+				current_node = next_node->prev;
+			}
+			else
+			{
+				current_node = next_node;
+			}
+			print_list(*head); /* Optional: print the current state of the list */
 		}
+		current_node = current_node->next;
 	}
 }
 
