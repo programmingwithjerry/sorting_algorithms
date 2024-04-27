@@ -30,9 +30,7 @@ void insertion_sort_list(listint_t **head)
 				current_node->prev->next = next_node;
 			}
 			else
-			{
 				*head = next_node;
-			}
 			if (next_node->next)
 			{
 				next_node->next->prev = current_node;
