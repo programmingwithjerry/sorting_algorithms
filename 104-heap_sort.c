@@ -1,102 +1,73 @@
 #include "sort.h"
-#include <stdio.h>
 
 /**
- * swap_elements - Utility function to swap two integers.
- * @first: Pointer to the first integer.
- * @second: Pointer to the second integer.
+ * heap_sort - Sorts an array using the heap sort algorithm.
+ * @array: Pointer to the array to sort.
+ * @array_size: Total size of the array.
  */
-void swap_elements(int *first, int *second)
+void heap_sort(int *array, size_t array_size)
 {
-	int temp = *first;
+	int last_index; /* Index for traversing the heap */
+	int temp; /* Temporary variable for swapping elements */
 
-	*first = *second;
-	*second = temp;
+	/* Build the initial max heap */
+	for (last_index = array_size / 2 - 1; last_index >= 0; last_index--)
+	{
+		/* Heapify from the middle downwards */
+		heapify(array, last_index, last_index, array_size);
+	}
+
+	/* Extract elements from the heap and rebuild the heap */
+	for (last_index = array_size - 1; last_index >= 0; last_index--)
+	{
+		/* Swap the root with the last element in the heap */
+		temp = array[0];
+		array[0] = array[last_index];
+		array[last_index] = temp;
+		/* Optional: print the array after each swap */
+		print_array(array, array_size);
+
+		/* Re-heapify the reduced heap */
+		heapify(array, last_index, 0, array_size);
+	}
 }
 
 /**
- * heapfyMax - Ensures the subtree rooted at a given index is a max-heap.
+ * heapify - Ensures the subtree rooted at a given index is a max heap.
  * @array: Pointer to the array.
- * @array_size: Size of the whole array.
- * @root_index: Index of the root node of the subtree.
  * @heap_size: Current size of the heap.
+ * @root_index: Index of the root node of the subtree.
+ * @array_size: Total size of the array.
  */
-void heapfyMax(int *array, size_t array_size, int root_index, size_t heap_size)
+void heapify(int *array, int heap_size, int root_index, size_t array_size)
 {
-	int largest = root_index; /* Assume root is the largest initially */
+	int largest = root_index; /* Initially assume the root is the largest */
 	int left_child = 2 * root_index + 1; /* Left child index */
 	int right_child = 2 * root_index + 2; /* Right child index */
-	/*int heap_size;*/
+	int temp; /* Temporary variable for swapping elements */
 
 	/* If the left child exists and is greater than the root, update largest */
-	if (left_child < (int)heap_size && array[left_child] > array[largest])
+	if (left_child < heap_size && array[left_child] > array[largest])
 	{
 		largest = left_child;
 	}
 
-	/**
-	* If the right child exists and is greater than the largest so far,
-	* update largest
-	*/
-	if (right_child < (int)heap_size && array[right_child] > array[largest])
+	/*If the right child exists and is greater than the largest, update largest*/
+	if (right_child < heap_size && array[right_child] > array[largest])
 	{
 		largest = right_child;
 	}
 
-	/**
-	*If root is not the largest, swap with the largest
-	* and heapify recursively
-	*/
+	/* If the root is not the largest, swap and recursively heapify */
 	if (largest != root_index)
 	{
-		/* Swap the root with the largest */
-		swap_elements(&array[root_index], &array[largest]);
-		/* Optional: Print the array after swapping */
+		temp = array[root_index];
+		array[root_index] = array[largest];
+		array[largest] = temp;
+		/* Optional: print the array after swapping */
 		print_array(array, array_size);
 		/* Recursively heapify the affected subtree */
-		heapfyMax(array, array_size, largest, heap_size);
-	}
-}
-
-/**
- * heap_sort - Sorts an array of integers in ascending
- * order using the heap sort algorithm.
- * @array: Pointer to the array to sort.
- * @array_size: Size of the whole array.
- */
-void heap_sort(int *array, size_t array_size)
-{
-	int current_index; /* Index for traversing the array */
-
-	if (array == NULL || array_size < 2)
-	{
-		/**
-		*If the array is null or has fewer than
-		* two elements, nothing to sort
-		*/
-		return;
-	}
-
-	/* Build a max-heap from the array */
-	current_index = (array_size - 2) / 2;
-	while (current_index >= 0)
-	{
-		heapfyMax(array, array_size, current_index, array_size);
-		current_index--;
-	}
-
-	/* Extract elements from the heap and rebuild it */
-	current_index = array_size - 1;
-	while (current_index > 0)
-	{
-		/* Swap the root of the heap (largest element) with the last element */
-		swap_elements(&array[0], &array[current_index]);
-		/* Optional: Print the array after each swap */
-		print_array(array, array_size);
-
-		/* Reduce the heap size by one and re-heapify the root */
-		heapfyMax(array, array_size, 0, current_index);
-		current_index--;
+		heapify(array, heap_size, largest, array_size);
 	}
 }
 

@@ -43,7 +43,7 @@ void merge_sequences(int array[], int start, int elCout, int isAscend);
 void elements_swap(int array[], int index1, int index2, int isAscend);
 void count_sort(int *array, size_t size, int exp, int *temp_array);
 void swap_elements(int *first, int *second);
-void heapfyMax(int *array, size_t array_size, int root_index, size_t heap_size);
+void heapify(int *array, int heap_size, int root_index, size_t array_size);
 void merge_arrays(int *array, int *temp_array, int start, int middle, int end);
 void *allocate_and_init(unsigned int element_count, unsigned int element_size);
 void *calloc_custom(unsigned int num_elements, unsigned int element_size);
