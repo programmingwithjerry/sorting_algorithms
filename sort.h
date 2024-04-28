@@ -35,6 +35,8 @@ void cocktail_sort_list(listint_t **list);
 void counting_sort(int *array, size_t size);
 void merge_sort(int *array, size_t size);
 
+void merge_arrays(int *array, int *temp_array, int start, int middle, int end);
+void *allocate_and_init(unsigned int element_count, unsigned int element_size);
 void *calloc_custom(unsigned int num_elements, unsigned int element_size);
 void swap(int *array, int first_index, int second_index);
 void bubble_sort(int *array, size_t size);
