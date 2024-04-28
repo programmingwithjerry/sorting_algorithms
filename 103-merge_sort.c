@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 /**
- * allocate_and_initialize - Allocates memory for
+ * allocate_and_init - Allocates memory for
  * an array and initializes it to zero.
  * @element_count: Number of elements to allocate.
  * @element_size: Size of each element in bytes.
@@ -46,16 +46,18 @@ void *allocate_and_init(unsigned int element_count, unsigned int element_size)
  */
 void merge_arrays(int *array, int *temp_array, int start, int middle, int end)
 {
-	int left_size = middle - start + 1, right_size = end - middle;
-	int *left_half, *right_half, left_index, right_index, main_index;
+	int left_size = middle - start + 1; /* Size of the left half */
+	int right_size = end - middle; /* Size of the right half */
+	int *left_half = &temp_array[0]; /* Start of the left half */
+	int *right_half = &temp_array[left_size]; /* Start of the right half */
+	int left_index = 0, right_index = 0, main_index = start;
 
-	left_half = &temp_array[0]; /* Start of the left half in the temp array */
-	right_half = &temp_array[left_size];
-	for (left_index = 0; left_index < left_size; left_index++)
+	for (; left_index < left_size; left_index++)
 		left_half[left_index] = array[start + left_index];
-	for (right_index = 0; right_index < right_size; right_index++)
+	for (; right_index < right_size; right_index++)
 		right_half[right_index] = array[middle + 1 + right_index];
-	main_index = start, left_index = 0, right_index = 0;
+	left_index = 0;
+	right_index = 0;
 	while (left_index < left_size && right_index < right_size)
 	{
 		if (left_half[left_index] <= right_half[right_index])
@@ -71,22 +73,14 @@ void merge_arrays(int *array, int *temp_array, int start, int middle, int end)
 		main_index++;
 	}
 	while (left_index < left_size)
-	{
-		array[main_index] = left_half[left_index];
-		left_index++;
-		main_index++;
-	}
+		array[main_index++] = left_half[left_index++];
 	while (right_index < right_size)
-	{
-		array[main_index] = right_half[right_index];
-		right_index++;
-		main_index++;
-	}
+		array[main_index++] = right_half[right_index++];
 	printf("Merging...\n");
 	printf("[Left]: ");
-	print_array(left_half, left_size); /* Display left half */
+	print_array(left_half, left_size); /* Display the left half */
 	printf("[Right]: ");
-	print_array(right_half, right_size); /* Display right half */
+	print_array(right_half, right_size); /* Display the right half */
 	printf("[Result]: ");
 	print_array(&array[start], left_size + right_size);
 }
