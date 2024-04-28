@@ -35,6 +35,9 @@ void cocktail_sort_list(listint_t **list);
 void counting_sort(int *array, size_t size);
 void merge_sort(int *array, size_t size);
 
+void quicksort_recursive(int *array, ssize_t start, ssize_t end, int array_size);
+int hoare_partition(int *array, int start, int end, int array_size);
+void my_swaps(int *array, ssize_t first_index, ssize_t second_index);
 void bitoSort(int array[], int start, int elCout, int isAscend, int array_size);
 void merge_sequences(int array[], int start, int elCout, int isAscend);
 void elements_swap(int array[], int index1, int index2, int isAscend);
