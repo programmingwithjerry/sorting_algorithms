@@ -35,6 +35,9 @@ void cocktail_sort_list(listint_t **list);
 void counting_sort(int *array, size_t size);
 void merge_sort(int *array, size_t size);
 
+void bitoSort(int array[], int start, int elCout, int isAscend, int array_size);
+void merge_sequences(int array[], int start, int elCout, int isAscend);
+void elements_swap(int array[], int index1, int index2, int isAscend);
 void count_sort(int *array, size_t size, int exp, int *temp_array);
 void swap_elements(int *first, int *second);
 void heapfyMax(int *array, size_t array_size, int root_index, size_t heap_size);
