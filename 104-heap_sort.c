@@ -26,10 +26,10 @@ void heapfyMax(int *array, size_t array_size, int root_index, size_t heap_size)
 	int largest = root_index; /* Assume root is the largest initially */
 	int left_child = 2 * root_index + 1; /* Left child index */
 	int right_child = 2 * root_index + 2; /* Right child index */
-	int heap_size;
+	/*int heap_size;*/
 
 	/* If the left child exists and is greater than the root, update largest */
-	if (left_child < heap_size && array[left_child] > array[largest])
+	if (left_child < (int)heap_size && array[left_child] > array[largest])
 	{
 		largest = left_child;
 	}
@@ -38,7 +38,7 @@ void heapfyMax(int *array, size_t array_size, int root_index, size_t heap_size)
 	* If the right child exists and is greater than the largest so far,
 	* update largest
 	*/
-	if (right_child < heap_size && array[right_child] > array[largest])
+	if (right_child < (int)heap_size && array[right_child] > array[largest])
 	{
 		largest = right_child;
 	}
