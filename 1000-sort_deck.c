@@ -1,164 +1,136 @@
 #include "deck.h"
-#include <stdio.h>
 
 /**
- * strings_equal - Compare two strings for equality.
- * @str1: First string.
- * @str2: Second string.
+ * compare_strings - Compares two strings and returns
+ * the difference in ASCII values.
+ * @str1: The first string to compare.
+ * @str2: The second string to compare.
  *
- * Return: 1 if the strings are equal, 0 otherwise.
+ * Return: Positive if str1 > str2, zero if they are equal,
+ * negative if str1 < str2.
  */
-int strings_equal(const char *str1, const char *str2)
+int compare_strings(const char *str1, const char *str2)
 {
-	size_t index = 0; /* Index for iteration */
-
-	if (str1 == NULL)
+	while (*str1 && *str2 && *str1 == *str2)
 	{
-		/* If the first string is null, they can't be equal */
-		return (0);
+		str1++;
+		str2++;
 	}
 
-	/* Compare characters until end of str1 */
-	while (str1[index])
+	return (*str1 - *str2); /* Difference in ASCII values */
+}
+
+/**
+ * get_card_value - Get the numerical value of a card.
+ * @card_node: Pointer to a deck node representing the card.
+ *
+ * Return: The numerical value of the card.
+ */
+int get_card_value(deck_node_t *card_node)
+{
+	if (compare_strings(card_node->card->value, "Ace") == 0)
+		return (1); /* Ace is often represented as 1 */
+	if (compare_strings(card_node->card->value, "10") == 0)
+		return (10);
+	if (compare_strings(card_node->card->value, "Jack") == 0)
+		return (11);
+	if (compare_strings(card_node->card->value, "Queen") == 0)
+		return (12);
+	if (compare_strings(card_node->card->value, "King") == 0)
+		return (13);
+
+	/* If not a face card, return the numerical value */
+	return (card_node->card->value[0] - '0');
+}
+
+/**
+ * insertion_sort_deck_by_suit - Sort a deck by suit (from spades to diamonds).
+ * @deck_head: Pointer to the head of a deck_node_t doubly linked list.
+ */
+void insertion_sort_deck_by_suit(deck_node_t **deck_head)
+{
+	deck_node_t *current, *previous, *next_card;
+
+	for (current = (*deck_head)->next; current != NULL; current = next_card)
 	{
-		if (str1[index] != str2[index])
+		next_card = current->next;
+		previous = current->prev;
+
+		while (previous != NULL && previous->card->kind > current->card->kind)
 		{
-			return (0); /* Return 0 if characters don't match */
+			previous->next = current->next;
+			if (current->next != NULL)
+			{
+				current->next->prev = previous;
+			}
+			current->prev = previous->prev;
+			current->next = previous;
+			if (previous->prev != NULL)
+			{
+				previous->prev->next = current;
+			}
+			else
+			{
+				*deck_head = current; /* Update the head if needed */
+			}
+			previous->prev = current;
+			previous = current->prev;
 		}
-		index++;
 	}
-
-	/* If str1 has ended but str2 hasn't, they aren't equal */
-	if (str1[index] == '\0' && str2[index])
-	{
-		return (0);
-	}
-
-	return (1); /* The strings are equal */
 }
 
 /**
- * get_card_rank - Get the card's rank based on its value and suit.
- * @card_node: Pointer to the card node.
- *
- * Return: The card's rank.
+ * insertion_sort_deck_by_value - Sort a deck by value
+ * (from ace to king, and then by suit).
+ * @deck_head: Pointer to the head of a deck_node_t doubly linked list.
  */
-int get_card_rank(deck_node_t *card_node)
+void insertion_sort_deck_by_value(deck_node_t **deck_head)
 {
-	int rank; /* Variable to hold the card's rank */
+	deck_node_t *current, *previous, *next_card;
 
-	/* Convert the card's value to its numerical rank */
-	rank = card_node->card->value[0] - '0';
-
-	/* If the rank is not a valid number, determine its special rank */
-	if (rank < 0 || rank > 9)
+	for (current = (*deck_head)->next; current != NULL; current = next_card)
 	{
-		if (strings_equal(card_node->card->value, "Ace"))
+		next_card = current->next;
+		previous = current->prev;
+
+		while (previous != NULL &&
+		       previous->card->kind == current->card->kind &&
+		       get_card_value(previous) > get_card_value(current))
 		{
-			rank = 1;
-		} else if (strings_equal(card_node->card->value, "10"))
-		{
-			rank = 10;
-		} else if (strings_equal(card_node->card->value, "Jack"))
-		{
-			rank = 11;
-		} else if (strings_equal(card_node->card->value, "Queen"))
-		{
-			rank = 12;
-		} else if (strings_equal(card_node->card->value, "King"))
-		{
-			rank = 13;
+			previous->next = current->next;
+			if (current->next != NULL)
+			{
+				current->next->prev = previous;
+			}
+			current->prev = previous->prev;
+			current->next = previous;
+			if (previous->prev != NULL)
+			{
+				previous->prev->next = current;
+			}
+			else
+			{
+				*deck_head = current; /* Update the head if needed */
+			}
+			previous->prev = current;
+			previous = current->prev;
 		}
 	}
-
-	/* Add the suit offset to get the final rank */
-	rank += card_node->card->kind * 13;
-
-	return (rank); /* Return the card's rank */
 }
 
 /**
- * swap_cards - Swap a card with its previous one in the deck.
- * @card_node: The card to swap.
- * @deck: Pointer to the deck.
- *
- * Return: Pointer to the card after swapping.
+ * sort_deck - Sort a deck of cards by suit and then by value.
+ * @deck_head: Pointer to the head of a deck_node_t doubly linked list.
  */
-deck_node_t *swap_cards(deck_node_t *card_node, deck_node_t **deck)
+void sort_deck(deck_node_t **deck_head)
 {
-	deck_node_t *previous = card_node->prev; /* Previous card */
-	deck_node_t *current = card_node; /* Current card */
-
-	/* Update the next and previous pointers */
-	previous->next = current->next;
-	if (current->next)
-	{
-		current->next->prev = previous;
-	}
-	current->next = previous;
-	current->prev = previous->prev;
-	previous->prev = current;
-
-	/* Update the deck's head if needed */
-	if (current->prev)
-	{
-		current->prev->next = current;
-	}
-	else
-	{
-		*deck = current;
-	}
-
-	return (current); /* Return the current card after swapping */
-}
-
-/**
- *insertion_sort_deck - Sort a doubly linked deck of cards with insertion sort.
- * @deck: Pointer to the deck to sort.
- */
-void insertion_sort_deck(deck_node_t **deck)
-{
-	int prev_card_rank, current_card_rank; /* Card ranks for comparison */
-	deck_node_t *current_node; /* Pointer to the current node */
-
-	if (deck == NULL || (*deck)->next == NULL)
+	if (deck_head == NULL || *deck_head == NULL || (*deck_head)->next == NULL)
 	{
 		/* No sorting needed if the deck is empty or has only one card */
 		return;
 	}
 
-	current_node = (*deck)->next; /* Start sorting from the second card */
-	while (current_node)
-	{
-		if (current_node->prev)
-		{
-			/* Get the previous card's rank */
-			prev_card_rank = get_card_rank(current_node->prev);
-			/* Get the current card's rank */
-			current_card_rank = get_card_rank(current_node);
-		}
-
-		/* While the previous card is greater than current card,swap them */
-		while (current_node->prev && prev_card_rank > current_card_rank)
-		{
-			/* Swap the cards */
-			current_node = swap_cards(current_node, deck);
-			/* Update the previous rank */
-			prev_card_rank = get_card_rank(current_node->prev);
-			/* Update the current rank */
-			current_card_rank = get_card_rank(current_node);
-		}
-
-		current_node = current_node->next; /* Move to the next card */
-	}
-}
-
-/**
- * sort_deck - Prepare a deck for sorting with insertion sort.
- * @deck: Pointer to the deck to sort.
- */
-void sort_deck(deck_node_t **deck)
-{
-	insertion_sort_deck(deck); /* Sort the deck */
+	insertion_sort_deck_by_suit(deck_head); /* Sort by suit first */
+	insertion_sort_deck_by_value(deck_head); /* Then sort by value */
 }
 
