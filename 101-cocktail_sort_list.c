@@ -5,7 +5,6 @@
  * swap_nodes - Swaps a node with its previous node in a doubly linked list.
  * @node: The node to swap.
  * @list: Pointer to the head of the doubly linked list.
- * 
  * Return: Pointer to the swapped node.
  */
 listint_t *swap_nodes(listint_t *node, listint_t **list)
@@ -14,25 +13,35 @@ listint_t *swap_nodes(listint_t *node, listint_t **list)
 	listint_t *current_node = node; /* The node to be swapped */
 
 	previous_node->next = current_node->next; /* Update the next pointer */
-	if (current_node->next) {
-		current_node->next->prev = previous_node; /* Update the previous pointer of the following node */
+	if (current_node->next)
+	{
+		/* Update the previous pointer of the following node */
+		current_node->next->prev = previous_node;
 	}
 
 	current_node->next = previous_node; /* Swap the nodes */
-	current_node->prev = previous_node->prev; /* Connect to the previous previous node */
-	previous_node->prev = current_node; /* Update the previous node's previous pointer */
+	/* Connect to the previous previous node */
+	current_node->prev = previous_node->prev;
+	/* Update the previous node's previous pointer */
+	previous_node->prev = current_node;
 
-	if (current_node->prev) {
-		current_node->prev->next = current_node; /* Connect to the previous node's next */
-	} else {
-		*list = current_node; /* Update the list head if swapped node becomes the first */
+	if (current_node->prev)
+	{
+		/* Connect to the previous node's next */
+		current_node->prev->next = current_node;
+	}
+	else
+	{
+		/* Update the list head if swapped node becomes the first */
+		*list = current_node;
 	}
 
-	return current_node; /* Return the swapped node */
+	return (current_node); /* Return the swapped node */
 }
 
 /**
- * cocktail_sort_list - Sorts a doubly linked list using the cocktail shaker sort algorithm.
+ * cocktail_sort_list - Sorts a doubly linked list using the
+ * cocktail shaker sort algorithm.
  * @list: Pointer to the head of the doubly linked list.
  */
 void cocktail_sort_list(listint_t **list)
@@ -51,22 +60,18 @@ void cocktail_sort_list(listint_t **list)
 	{
 		swaps_made = 0; /* Reset flag to detect if swaps are made in this pass */
 		current_node = *list; /* Start from the beginning */
-
 		/* Forward pass to sort the list */
 		for (; current_node->next; current_node = current_node->next)
 		{
 			if (current_node->n > current_node->next->n)
 			{
-				current_node = swap_nodes(current_node->next, list); /* Swap if out of order */
+				current_node = swap_nodes(current_node->next, list);
 				swaps_made = 1; /* Indicate a swap was made */
 				print_list(*list); /* Optional: print the list after each swap */
 			}
 		}
-
 		if (swaps_made == 0)
-		{
 			break; /* If no swaps were made, sorting is complete */
-		}
 
 		swaps_made = 0; /* Reset flag for the backward pass */
 
